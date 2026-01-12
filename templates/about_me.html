@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>About the Portal - Corporate Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="particles-js"></div>
+    
+    <div class="overlay">
+        <nav class="navbar">
+            <div class="logo">skill<span>soft</span></div>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/about_me" class="active">About Me</a>
+                <span class="user-tag">Hi, {{ user }}</span>
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+
+        <header class="hero">
+            <h1>Our Mission</h1>
+            <p>Empowering teams through intelligent data tools and streamlined knowledge sharing.</p>
+        </header>
+
+        <main style="padding:40px;">
+            <div class="about-text" style="max-width:1100px; margin:0 auto; color:#d0d6df; line-height:1.6;">
+                <h2 style="margin-bottom:12px;">The Corporate Portal</h2>
+                <p>This platform was developed to serve as a centralized hub for productivity. By integrating advanced tools for book summarization, data conversion, and code visualization, we aim to reduce friction in the daily workflow.</p>
+                <p>Our goal is to transform complex information into actionable insights for every team member.</p>
+
+                <h3 style="margin-top:24px;">Book Summary Creation</h3>
+                <p>Utilizing AI to distill vast amounts of literature and documentation into concise, readable summaries.</p>
+
+                <h3 style="margin-top:18px;">Excel to XML Conversion</h3>
+                <p>Tools to convert spreadsheet data into XML formats for downstream processing.</p>
+
+                <h3 style="margin-top:18px;">Code Visualization</h3>
+                <p>Converting abstract code and data structures into visual formats that are easier to analyze and share.</p>
+
+                <h3 style="margin-top:18px;">Personalized Learning</h3>
+                <p>Personalized learning pathways and content generation tailored to user needs.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

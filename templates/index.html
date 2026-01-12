@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Corporate Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="particles-js"></div>
+    
+    <div class="overlay">
+        <nav class="navbar">
+    <div class="logo">skill<span>soft</span></div>
+    <div class="nav-links">
+        <a href="/" class="active">Home</a>
+        <a href="/about_me">About Me</a>
+        <!-- <a href="/work_allocation">Work Allocation</a> -->
+        <!-- <a href="/reports">Reports</a> -->
+        
+        <span class="user-tag">Hi, {{ user }}</span>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+</nav>
+
+        <header class="hero">
+            <h1>Company Portal</h1>
+            <p>A platform with tools for summarizing books, converting data, and visualizing code.</p>
+            
+        </header>
+
+        
+        <main class="app-grid">
+    {% for app in apps %}
+<div class="app-card">
+    <!-- <div class="icon">🚀</div> -->
+    <h3>{{ app.name }}</h3>
+    <p>{{ app.desc }}</p>
+    
+    <a href="{{ app.url }}" target="_blank" class="launch-btn" style="text-decoration:none; display:inline-block;">
+        Launch App
+    </a>
+</div>
+{% endfor %}
+</main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Work Allocation Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-body">
+    <div id="particles-js"></div>
+
+    <div class="sfa-container">
+        <aside class="sfa-sidebar">
+            <div class="brand">skillsoft</div>
+            <nav>
+                <a href="javascript:void(0)" onclick="showSection('available')" class="nav-item active">
+                    <i class="icon">🔍</i> Available
+                </a>
+                <a href="javascript:void(0)" onclick="showSection('progress')" class="nav-item">
+                    <i class="icon">⚡</i> In Progress
+                </a>
+                {% if user_role == 'Admin' %}
+                <a href="javascript:void(0)" onclick="showSection('add-task')" class="nav-item">
+                    <i class="icon">➕</i> Add Task
+                </a>
+                {% endif %}
+            </nav>
+        </aside>
+
+        <main class="sfa-main">
+            <header class="sfa-header">
+                <span class="date">{{ today }}</span>
+                <h1>Work Allocation Dashboard</h1>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/35" class="avatar">
+                    <span>Hi, {{ user_role }}!</span>
+                </div>
+            </header>
+
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <i class="icon">🔍</i>
+                    <input type="text" id="courseSearch" placeholder="Search by Asset ID/Course ID" onkeyup="filterCourses()">
+                </div>
+            </div>
+
+            {% if user_role == 'Admin' %}
+            <section class="glass-panel admin-panel">
+                <h3>Admin: Create New Task</h3>
+                <form action="/add_task" method="POST" class="admin-form-grid">
+                    <input type="text" name="course_code" placeholder="Asset/Course ID" required>
+                    <select name="product">
+                        <option value="E-Book">E-Book</option>
+                        <option value="Audio Book">Audio Book</option>
+                        <option value="Video">Video</option>
+                    </select>
+                    <select name="priority">
+                        <option value="Normal">Normal</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                    <input type="text" name="duration" placeholder="Duration (e.g. 320 Pages)">
+                    <input type="text" name="req_time" placeholder="Req Time (Mins)">
+                    <select name="multiplier">
+                        <option value="0.1">0.1x</option>
+                        <option value="1.0" selected>1.0x</option>
+                        <option value="1.5">1.5x</option>
+                    </select>
+                    <input type="text" name="round" placeholder="Round (e.g. Round 1)">
+                    <select name="vendor">
+                        <option value="HYD-DEV">HYD-DEV</option>
+                        <option value="Vendor1">Vendor1</option>
+                    </select>
+                    <input type="datetime-local" name="received_date">
+                    <button type="submit" class="sfa-btn primary">Save Task</button>
+                </form>
+            </section>
+            {% endif %}
+
+            <div class="task-grid-container">
+                <div class="allocation-col">
+                    <h2 class="col-title">AVAILABLE FOR ASSIGNMENT</h2>
+                    {% if available %}
+                        {% for t in available %}
+                        <div class="sfa-card">
+                            <p><strong>Asset:</strong> {{ t.course_code }} | <strong>Type:</strong> {{ t.product }}</p>
+                            <p><strong>Duration:</strong> {{ t.duration }} | <strong>Req Time:</strong> {{ t.req_time }}</p>
+                            <a href="/assign/{{ t.id }}" class="sfa-btn primary">Update (Assign)</a>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="empty-msg">No available tasks.</p>
+                    {% endif %}
+                </div>
+
+                <div class="assigned-col">
+                    <h2 class="col-title">MY CURRENT WORK</h2>
+                    {% if wip %}
+                        {% for t in wip %}
+                        <div class="sfa-card wip">
+                            <h3>Asset: {{ t.course_code }}</h3>
+                            <form action="/complete/{{ t.id }}" method="GET">
+                                <label>Number of Edits:</label>
+                                <input type="number" name="num_edits" value="0" class="mini-input">
+                                <button type="submit" class="sfa-btn white">Complete Task</button>
+                            </form>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>Getting your data ...</p>
+                        <div class="loader"></div>
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+    </div>
+    <aside class="sfa-sidebar">
+    <div class="brand">skillsoft</div>
+    <nav>
+        <a href="/" class="{{ 'active' if request.path == '/' }}"><i class="icon">🏠</i> Home</a>
+
+        {% if user_role == 'Admin' %}
+        <a href="/work_allocation" class="{{ 'active' if active_tab == 'add' }}"><i class="icon">➕</i> Add Task</a>
+        {% endif %}
+
+        <a href="/work_allocation" class="{{ 'active' if active_tab == 'available' }}"><i class="icon">🔍</i> Available</a>
+        <a href="/work_allocation" class="{{ 'active' if active_tab == 'progress' }}"><i class="icon">⚡</i> In Progress</a>
+        <a href="/work_allocation" class="{{ 'active' if active_tab == 'completed' }}"><i class="icon">✔️</i> Completed</a>
+
+        <a href="/efficiency" class="{{ 'active' if request.path == '/efficiency' }}"><i class="icon">📊</i> Efficiency</a>
+        <a href="/reports" class="{{ 'active' if request.path == '/reports' }}"><i class="icon">📋</i> Reports</a>
+        
+        <a href="/logout" style="margin-top: auto; color: #ff4d4d;"><i class="icon">🚪</i> Exit</a>
+    </nav>
+</aside>
+
+<div class="sfa-main">
+    <div class="search-container">
+        <input type="text" id="courseSearch" placeholder="Search by Asset ID..." onkeyup="filterCourses()">
+    </div>
+
+    <section id="add-section" class="tab-content {{ 'active' if active_tab == 'add' }}">
+        <h3>Admin: Create New Task</h3>
+        </section>
+
+    <section id="available-section" class="tab-content {{ 'active' if active_tab == 'available' or not active_tab }}">
+        <h2>AVAILABLE FOR ASSIGNMENT</h2>
+        <div class="allocation-grid">
+            {% for t in available %}
+            <div class="sfa-card">
+                <p><strong>Asset ID:</strong> {{ t.asset_id }}</p>
+                <p><strong>Req Time:</strong> {{ t.req_time }} mins</p>
+                <a href="/assign/{{ t.id }}" class="sfa-btn primary">Assign to Me</a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="progress-section" class="tab-content {{ 'active' if active_tab == 'progress' }}">
+        <h2>MY CURRENT WORK</h2>
+        </section>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
