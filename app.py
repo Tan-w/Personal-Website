@@ -1,5 +1,24 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from datetime import datetime
+import os
+import sys
+from flask import Flask # or django
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
+# You MUST tell Flask to use the resource_path for templates and static
+app = Flask(__name__, 
+            template_folder=resource_path('templates'),
+            static_folder=resource_path('static'))
+
+if __name__ == "__main__":
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000))
+    )
 
 app = Flask(__name__)
 app.secret_key = 'portal_secret_key'  # Updated secret for this portal
@@ -192,4 +211,5 @@ def assign(task_id):
             t['picked_time'] = datetime.now().strftime("%Y-%m-%d %H:%M")
             
     # Redirect back to the In-Progress tab
+
     return redirect(url_for('work_allocation', tab='progress'))
