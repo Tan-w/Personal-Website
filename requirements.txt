@@ -5,3 +5,6 @@ python-dotenv==1.0.0
 # Optional production servers (uncomment to use)
 # gunicorn==20.1.0
 # waitress==2.1.1
+
+Flask==2.x.x
+gunicorn==20.x.x
